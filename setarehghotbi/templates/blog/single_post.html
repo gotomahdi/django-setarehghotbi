@@ -105,12 +105,13 @@
           {% if comment.parent is None %}
               <div style="background-color: white; padding: 20px; margin: 20px 0 20px 0;">
                 <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{article.auther.profile.url}}" width="40">
-                    <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name"> {% if comment.commenter.get_full_name %}
-                                                                                                                              {{comment.commenter.get_full_name}}
-                                                                                                                            {% else %}
-                                                                                                                              {{comment.commenter.username}}
-                                                                                                                            {% endif %}
-                                                                                                                            </span><span class="date text-black-50">تاریخ:{{comment.date_created}}</span></div>
+                    <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name"> 
+                      {% if comment.commenter.get_full_name %}
+                        {{comment.commenter.get_full_name}}
+                      {% else %}
+                        {{comment.commenter.username}}
+                       {% endif %}
+                      </span><span class="date text-black-50">تاریخ:{{comment.date_created}}</span></div>
                 </div>
                 <hr>
                 <div class="mt-2">
