@@ -1,6 +1,7 @@
 from django.db import models
 from account.models import User
 from django.utils import timezone
+from django.db.models import Q
 
 # Create your models here.
 
@@ -89,5 +90,9 @@ class Comment(models.Model):
 		return self.likes.count()
 
 
+	def comment_parent_count(self):
+		return Comment.objects.filter(Q(status=True)&Q(parent=self)).count()
+
+
 	def __str__(self):
-		return 'comment by {}'.format(self.commenter.username)
+		return 'comment by {} : {}'.format(self.commenter.username,self.content[:30])
