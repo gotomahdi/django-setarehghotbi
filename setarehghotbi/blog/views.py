@@ -95,6 +95,9 @@ def SinglePostView(request,slug):
     all_comments=Comment.objects.filter(status=True)
     article=get_object_or_404(BlogModel,slug=slug)
 
+
+    # This part is for create a new comment by user and save the comment 
+    # The another bart of the comment system is like comment that created on anotehr view
     if request.method == 'POST':
         if request.user.is_authenticated:
             comment_form=CommentForm(request.POST or None)
@@ -143,10 +146,11 @@ def LikeComment(request):
             comment_id=request.POST.get('comment_id')
             comment=get_object_or_404(Comment,id=comment_id)
             comment.likes.add(request.user)
-            slug=request.POST.get('slug')
-            return HttpResponseRedirect(reverse('blog:single_post',kwargs={'slug':slug}))
+            comment.save()
+            article_slug=request.POST.get('slug')
+            return HttpResponseRedirect(reverse('blog:single_post',kwargs={'slug':article_slug}))
         else:
-            return HttpResponseRedirect(reverse('blog:single_post',kwargs={'slug':slug}))
+            return HttpResponse('pleas send post request')
     else:
         return HttpResponse('pleas authentication')
 

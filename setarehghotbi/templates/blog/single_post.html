@@ -87,12 +87,12 @@
       
       <div class="comment">
         <h2 style="color:#686666;">تعداد دیدگاه:۱۰۰</h2>
+        {% if request.user.is_authenticated %}
         <form method="post">
           {% csrf_token %}
           {{comment_form.content}}
           <button class="btn btn-success" style="float:left; margin: 15px; font-size: 20px;">ثبت این نظر</button>
         </form>
-        {% if request.user.is_authenticated %}
           <div class="d-flex flex-row user-info" style="margin-top :10px;"><img class="rounded-circle" src="{{request.user.profile.url}}" width="50">
          <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">Marry Andrews</span><span class="date text-black-50">Shared publicly - Jan 2020</span></div>
           </div>
@@ -117,18 +117,22 @@
                 <div class="mt-2">
                     <p class="comment-text">{{comment.content}}</p>
                 </div>
+                <hr>
                 <div class="comment-text" style="text-align: left;"> 
                 {% if comment in request.user.likes.all %}
-                    {{comment.comment_likes_count}} likes <img style='width: 25px;' src="{% static 'blog/assets/img/hug-icon.png' %}"> 
+                  {{comment.comment_likes_count}} likes <img style='width: 25px;' src="{% static 'blog/assets/img/hug-icon.png' %}"> 
                 {% else %}
-                    {{comment.comment_likes_count}} likes <a href="" style="display:inline-block;" onClick="document.getElementById('likebutton').submit()"><img style='width: 25px;' src="{% static 'blog/assets/img/hug-icon-2.png' %}"></a> 
-                    <form action="{% url 'blog:like_comment' %}" id="likebutton" method="post">
+                    <form action="{% url 'blog:like_comment' %}" method="post">
                       {% csrf_token %}
+                      {{comment.comment_likes_count}} likes
+                      <button type="submit" style="background-color: #fff; border: 0; margin-left: -3px;">
+                        <img src="{% static 'blog/assets/img/hug-icon-2.png' %}" alt="buttonpng" border="0" style="width:25px" />
+                      </button>
                       <input type="hidden" name="slug" value="{{article.slug}}">
                       <input type="hidden" name="comment_id" value="{{comment.id}}">
                     </form>
                 {% endif %}
-                  <button style="float:right;" class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#target{{comment.id}}">100 پاسخ<i class="bi bi-reply"></i></button>
+                <button style="float:right;" class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#target{{comment.id}}">100 پاسخ<i class="bi bi-reply"></i></button>
                   <div id="target{{comment.id}}" class="collapse" style="text-align: right; padding:20px; background-color: gray; margin-top:30px;">
                       <form method="post" action="{% url 'blog:single_post' article.slug %}">
                         {% csrf_token %}
