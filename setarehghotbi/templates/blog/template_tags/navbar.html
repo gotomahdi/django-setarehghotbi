@@ -1,6 +1,5 @@
 <header id="header" class="d-flex align-items-center ">
   <div class="container-fluid d-flex align-items-center justify-content-lg-between">
-
     <h1 class="logo me-auto me-lg-0"><a href="{% url 'blog:home' %}">SETAREHGHOTBI</a></h1>
     <!-- Uncomment below if you prefer to use an image logo -->
     <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
@@ -10,8 +9,8 @@
         <li><a class="nav-link scrollto active" href="{% url 'blog:home' %}">خانه</a></li>
         {% for category in categorys %}
           {% if category.parent is None %}
-            <li class="dropdown"><a href="{% url 'blog:category' category.slug %}"><span>{{category.title}}</span>{% if category.childern.all %}<i class="bi bi-chevron-down"></i>{% endif %}</a>
-              {% if category.childern.all %}
+            <li class="dropdown"><a href="{% url 'blog:category' category.slug %}"><span>{{category.title}}</span>{% if category.have_children %}<i class="bi bi-chevron-down"></i>{% endif %}</a>
+              {% if category.have_children %}
                 {% include 'blog/template_tags/navbar_loop.html' %}
               {% endif %}
           </li>
@@ -33,4 +32,5 @@
     {% endif %}
 
   </div>
+
 </header>

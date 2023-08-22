@@ -12,11 +12,13 @@ class CategoryModels(models.Model):
 	description=models.TextField(max_length=200,verbose_name='category description',blank=True)
 	image=models.ImageField(upload_to='media',verbose_name='category image')
 	slug=models.SlugField(max_length=150,verbose_name='slug category')
-	parent=models.ForeignKey('CategoryModels',verbose_name='category parend',on_delete=models.CASCADE,related_name='childern',default=None,blank=True,null=True)
+	parent=models.ForeignKey('CategoryModels',verbose_name='category parend',on_delete=models.CASCADE,related_name='children',default=None,blank=True,null=True)
+	have_children=models.BooleanField(verbose_name='category is parent of another category',default=False)
 
 
 	def __str__(self):
 		return self.title 
+
 
 
 

@@ -1,14 +1,14 @@
 <ul>
-  {% for category in category.childern.all %}
+  {% for category in category.children.all %}
     <li class="dropdown">
       <a href="{% url 'blog:category' category.slug %}">
-        {% if category.childern.all %} 
+        {% if category.have_children %} 
           <i class="bi bi-chevron-right"></i>
         {% else %}
           <i class="bi"></i>
         {% endif %}
         <span>{{category.title}}</span></a>
-      {% if category.childern.all %}
+      {% if category.chave_children %}
         {% include 'blog/template_tags/navbar_loop.html' %}
       {% endif %}
     </li>
