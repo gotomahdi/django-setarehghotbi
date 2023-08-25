@@ -1,6 +1,6 @@
 {% extends 'blog/home.html' %}
 {% load static %}
-
+{% load blog_tags %}
 
 
 
@@ -101,7 +101,7 @@
         {% endif %}
         <hr>
         <h1 style="text-align:center; text-decoration:underline; margin-bottom: 30px;">دیدگاه ها</h1>
-        {% for comment in comments %}
+        {% for comment in all_comments %}
           {% if comment.parent is None %}
               <div style=" padding: 20px 0px 20px 0px; margin: 20px 0 20px 0;">
                 <div class="d-flex flex-row user-info"><img class="rounded-circle" src="{{article.auther.profile.url}}" width="40">
@@ -118,21 +118,21 @@
                     <p class="comment-text">{{comment.content}}</p>
                 </div>
                 <div class="comment-text" style="text-align: left;"> 
-                {% if comment in request.user.likes.all %}
-                  <span style="margin-top: 22px">{{comment.comment_likes_count}} likes<img style='width: 25px;' src="{% static 'blog/assets/img/hug-icon.png' %}"></span>
+                {% if comment in user_likes %}
+                  <span style="margin-top: 22px">{{comment.like_count}} likes<img style='width: 25px;' src="{% static 'blog/assets/img/hug-icon.png' %}"></span>
                   
                 {% else %}
                     <form action="{% url 'blog:like_comment' %}" method="post" style="display: inline;">
                       {% csrf_token %}
                       
                       <button type="submit" style="background-color: #f0f0f0; border: 0; margin-left: -3px;">
-                        {{comment.comment_likes_count}} likes<img src="{% static 'blog/assets/img/hug-icon-2.png' %}" alt="buttonpng" border="0" style="width:25px" />
+                        {{comment.like_count}} likes<img src="{% static 'blog/assets/img/hug-icon-2.png' %}" alt="buttonpng" border="0" style="width:25px" />
                       </button>
                       <input type="hidden" name="slug" value="{{article.slug}}">
                       <input type="hidden" name="comment_id" value="{{comment.id}}">
                     </form>
                 {% endif %}
-                <button style="float:right; margin-top: 22px" class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#target{{comment.id}}">{{comment.comment_parent_count}} پاسخ<i class="bi bi-reply"></i></button>
+                <button style="float:right; margin-top: 22px" class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#target{{comment.id}}">{{comment.parent_count}} پاسخ<i class="bi bi-reply"></i></button>
                 <hr>
                   <div id="target{{comment.id}}" class="collapse" style="text-align: right; padding:20px;">
                       <form method="post" action="{% url 'blog:single_post' article.slug %}">
@@ -149,9 +149,9 @@
                         <h3 style="color:#dfbe0c;margin-top :15px;">برای ثبت دیدگاه باید <a href="#">ثبت نام </a> کنید</h3>
                       {% endif %}
                       <hr>
-                      {% if comment.replys.all %}
+                      {% if comment.have_reply %}
 
-                        {% include 'blog/comment_loop.html' %}
+                        {% comment_loop all_comments comment article request comment_form %}
 
                       {% endif %}
 

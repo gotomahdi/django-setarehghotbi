@@ -92,9 +92,12 @@ def SubscribeView(request):
 # This view  for showing article content page
 def SinglePostView(request,slug):
 
-    all_comments=Comment.objects.filter(status=True)
-    article=get_object_or_404(BlogModel,slug=slug)
-
+    all_comments=Comment.objects.select_related('commenter','parent').filter(status=True,post__slug=slug)
+    article=BlogModel.objects.select_related('auther').get(slug=slug)
+    if request.user.is_authenticated:
+        user_likes=request.user.likes.all() 
+    else :
+        user_likes=None
 
     # This part is for create a new comment by user and save the comment 
     # The another bart of the comment system is like comment that created on anotehr view
@@ -105,13 +108,16 @@ def SinglePostView(request,slug):
                 content=comment_form.cleaned_data['content']
 
                 if request.POST.get('comment_id'):
-                    comment_parent=get_object_or_404(all_comments,id=request.POST.get('comment_id'))
+                    comment_parent=get_object_or_404(Comment,id=request.POST.get('comment_id'))
                     comment=Comment.objects.create(
                         post=article,
                         commenter=request.user,
                         content=content,
                         parent=comment_parent,
                         )
+                    comment_parent.have_reply=True
+                    comment_parent.parent_count+=1
+                    comment_parent.save()
 
                 else:
                     comment=Comment.objects.create(
@@ -132,7 +138,8 @@ def SinglePostView(request,slug):
     context={
         'article':article,
         'comment_form':comment_form,
-        'comments':all_comments,
+        'all_comments':all_comments,
+        'user_likes':user_likes,
     }
 
     return render(request,'blog/single_post.html',context)
@@ -144,9 +151,17 @@ def LikeComment(request):
     if request.user.is_authenticated:
         if request.method=='POST':
             comment_id=request.POST.get('comment_id')
-            comment=get_object_or_404(Comment,id=comment_id)
-            comment.likes.add(request.user)
-            comment.save()
+            comment=Comment.objects.prefetch_related('likes').get(id=comment_id)
+            if comment.likes.filter(id=request.user.id).exists():
+                comment.likes.remove(request.user)
+                comment.like_count-=1
+                comment.save()
+            else:
+                comment.likes.add(request.user)
+                comment.like_count+=1
+                comment.save()
+
+
             article_slug=request.POST.get('slug')
             return HttpResponseRedirect(reverse('blog:single_post',kwargs={'slug':article_slug}))
         else:
@@ -193,7 +208,7 @@ def AutherArticlesView(request,slug):
 def CategoryView(request,slug):
 
 
-    category = get_object_or_404(slug=slug)
+    category = get_object_or_404(CategoryModels,slug=slug)
     articles = category.article.filter(status='public')
 
     paginator=Paginator(articles,6)

@@ -1,5 +1,6 @@
+{% load blog_tags %}
 <ul>
-  {% for category in category.children.all %}
+  {% for category in category_childrens %}
     <li class="dropdown">
       <a href="{% url 'blog:category' category.slug %}">
         {% if category.have_children %} 
@@ -8,8 +9,8 @@
           <i class="bi"></i>
         {% endif %}
         <span>{{category.title}}</span></a>
-      {% if category.chave_children %}
-        {% include 'blog/template_tags/navbar_loop.html' %}
+      {% if category.have_children %}
+        {% navbar_loop all_categories category %}
       {% endif %}
     </li>
   {% endfor %}

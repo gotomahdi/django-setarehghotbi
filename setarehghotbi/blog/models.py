@@ -85,8 +85,10 @@ class Comment(models.Model):
 	status=models.BooleanField(verbose_name='comment status',default=False)
 	date_created=models.DateTimeField(verbose_name='comment date created',default=timezone.now)
 	parent=models.ForeignKey('Comment',verbose_name='reply comments',on_delete=models.CASCADE,related_name='replys',default=None,null=True,blank=True)
+	have_reply=models.BooleanField(verbose_name='This comment have reply/replies',default=False)
 	likes=models.ManyToManyField(User,related_name='likes',verbose_name='likes comment',default=None,blank=True)
-
+	like_count=models.IntegerField(verbose_name='The number of likes',default=0)
+	parent_count=models.IntegerField(verbose_name='The number of replies',default=0)
 
 	def comment_likes_count(self):
 		return self.likes.count()
