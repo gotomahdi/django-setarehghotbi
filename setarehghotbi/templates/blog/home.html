@@ -1,5 +1,7 @@
 {% load static %}
 {% load blog_tags %}
+{% load compress %}
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -32,6 +34,7 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+  {% endcompress %}
 </head>
 
 <body>
@@ -117,16 +120,9 @@
 
   <!-- End Footer -->
   <!-- Vendor JS Files -->
-  <script src="{% static 'blog/assets/vendor/purecounter/purecounter.js' %}"></script>
-  <script src="{% static 'blog/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'blog/assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
-  <script src="{% static 'blog/assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'blog/assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
-  <script src="{% static 'blog/assets/vendor/php-email-form/validate.js' %}"></script>
 
   <!-- Template Main JS File -->
   <script src="{% static 'blog/assets/js/main.js' %}"></script>
-
 </body>
 
 </html>
