@@ -108,13 +108,29 @@ def SinglePostView(request,slug):
     else :
         user_likes=None
 
+    context={
+        'article':article,
+        'all_comments':all_comments,
+        'user_likes':user_likes,
+    }
+
+    return render(request,'blog/single_post.html',context)
+
+
+
+
+
+def CreateComment(request):
+
     # This part is for create a new comment by user and save the comment 
-    # The another bart of the comment system is like comment that created on anotehr view
+    # The another part of the comment system is like comment that created on anotehr view
     if request.method == 'POST':
         if request.user.is_authenticated:
             comment_form=CommentForm(request.POST or None)
             if comment_form.is_valid():
                 content=comment_form.cleaned_data['content']
+                article_slug=request.POST.get('article_slug')
+                article=get_object_or_404(BlogModel,slug=article_slug)
 
                 if request.POST.get('comment_id'):
                     comment_parent=get_object_or_404(Comment,id=request.POST.get('comment_id'))
@@ -136,22 +152,16 @@ def SinglePostView(request,slug):
                         )
 
                 comment.save()
+                return redirect(reverse('blog:single_post',kwargs={'slug':article_slug}))
             else: 
                 return HttpResponse('form is not valid')
         else:
             return HttpResponse('pleas authentication')
     else:
-        comment_form=CommentForm()
+        return redirect(reverse('blog:home'))
 
 
-    context={
-        'article':article,
-        'comment_form':comment_form,
-        'all_comments':all_comments,
-        'user_likes':user_likes,
-    }
 
-    return render(request,'blog/single_post.html',context)
 
 
 

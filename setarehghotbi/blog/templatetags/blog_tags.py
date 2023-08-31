@@ -23,7 +23,7 @@ def pagination(page_object,url,search=False):
 
 
 @register.inclusion_tag('blog/comment_loop.html')
-def comment_loop(all_comment,comment,article,request,comment_form):
+def comment_loop(all_comment,comment,article,request):
 
 	comment_reply=filter(lambda item: item.parent and item.parent.id==comment.id,all_comment) 
 
@@ -33,7 +33,6 @@ def comment_loop(all_comment,comment,article,request,comment_form):
 		'comment_reply':comment_reply,
 		'article':article,
 		'request':request,
-		'comment_form':comment_form
 	}
 
 

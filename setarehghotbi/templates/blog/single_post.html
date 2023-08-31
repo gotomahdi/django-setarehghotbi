@@ -88,9 +88,12 @@
       <div class="comment">
         <h2 style="color:#686666;">تعداد دیدگاه:۱۰۰</h2>
         {% if request.user.is_authenticated %}
-        <form method="post">
+          <form action="{% url 'blog:create-comment' %}" method="post">
+
           {% csrf_token %}
-          {{comment_form.content}}
+          <textarea name="content" cols="103" rows="7" class="form-control" placeholder="میتونید دیدگاه خودتون رو اینجا بنویسید!" maxlength="1000" required="" id="id_content"></textarea>
+          <input type="hidden" name="article_slug" value="{{article.slug}}">
+
           <button class="btn btn-success" style="float:left; margin: 15px; font-size: 20px;">ثبت این نظر</button>
         </form>
           <div class="d-flex flex-row user-info" style="margin-top :10px;"><img class="rounded-circle" src="{{request.user.profile.url}}" width="50">
@@ -135,10 +138,12 @@
                 <button style="float:right; margin-top: 22px" class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#target{{comment.id}}">{{comment.parent_count}} پاسخ<i class="bi bi-reply"></i></button>
                 <hr>
                   <div id="target{{comment.id}}" class="collapse" style="text-align: right; padding:20px;">
-                      <form method="post" action="{% url 'blog:single_post' article.slug %}">
+                      <form method="post" action="{% url 'blog:create-commnet' %}">
                         {% csrf_token %}
-                        {{comment_form.content}}
+                        <textarea name="content" cols="103" rows="7" class="form-control" placeholder="میتونید دیدگاه خودتون رو اینجا بنویسید!" maxlength="1000" required="" id="id_content"></textarea>
                         <input type="hidden" name="comment_id" value="{{comment.id}}">
+                        <input type="hidden" name="article_slug" value="{{article.slug}}">
+
                         <button class="btn btn-success" style="float:left; font-size: 20px;">ثبت این نظر</button>
                       </form>
                       {% if request.user.is_authenticated %}
@@ -151,7 +156,7 @@
                       <hr>
                       {% if comment.have_reply %}
 
-                        {% comment_loop all_comments comment article request comment_form %}
+                        {% comment_loop all_comments comment article request  %}
 
                       {% endif %}
 

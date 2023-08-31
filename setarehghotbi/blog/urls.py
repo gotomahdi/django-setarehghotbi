@@ -13,6 +13,7 @@ from .views import(
 					SearchAutherArticles ,
 					AboutUS,
 					LikeComment,
+					CreateComment
 )
 
 
@@ -27,6 +28,7 @@ urlpatterns=[
 	path('article/<slug:slug>',SinglePostView,name='single_post'),   
 	path('blog/search/',BlogSearchView,name='blog_search'),
 	path('like_comment/',LikeComment,name='like_comment'),
+	path('create-comment/',CreateComment,name='create-comment'),
 
 	path('category/<slug:slug>',CategoryView,name='category'),     
 	path('category/search/<slug:slug>',CategorySearchView,name='category_search'),

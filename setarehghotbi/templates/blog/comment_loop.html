@@ -33,10 +33,12 @@
                       </form>
                   {% endif %}
                     <div id="target{{comment.id}}" class="collapse" style="text-align: right; padding:20px; background-color: gray; margin:30px 30px 0 0 ;">
-                        <form method="post" action="{% url 'blog:single_post' article.slug %}">
+                        <form method="post" action="{% url 'blog:create-comment' %}">
                           {% csrf_token %}
-                          {{comment_form.content}}
+                          <textarea name="content" cols="103" rows="7" class="form-control" placeholder="میتونید دیدگاه خودتون رو اینجا بنویسید!" maxlength="1000" required="" id="id_content"></textarea>
                           <input type="hidden" name="comment_id" value="{{comment.id}}">
+                          <input type="hidden" name="article_slug" value="{{article.slug}}">
+
                           <button class="btn btn-success" style="float:left; margin: 15px; font-size: 20px;">ثبت این نظر</button>
                         </form>
                         {% if request.user.is_authenticated %}
@@ -49,7 +51,7 @@
                         <hr>
                         {% if comment.have_reply %}
 
-                          {% comment_loop all_comments comment article request comment_form %}
+                          {% comment_loop all_comments comment article request %}
 
                         {% endif %}
 
