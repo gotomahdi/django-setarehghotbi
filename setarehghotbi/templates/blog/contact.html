@@ -36,14 +36,6 @@
             <form action="/send-ticket/" method="post" role="form" class="php-email-form">
               {% csrf_token %}
                 <div class="row">
-                  <div class="col-md-6 form-group">
-                    <input class="form-control" placeholder="نام شما" type="text" name="name" maxlength="30" required="" id="id_name">
-                  </div>
-
-                  <div class="col-md-6 form-group mt-3 mt-md-0">
-                    <input class="form-control" placeholder="ایمیل شما" type="email" name="email" maxlength="250" required="" id="id_email">
-                  </div>
-
                   <div class="form-group mt-3">
                     <input class="form-control" placeholder="عنوان" type="text" name="title" maxlength="100" required="" id="id_title">
                   </div>

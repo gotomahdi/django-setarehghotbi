@@ -13,7 +13,7 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator ,EmptyPage, PageNotAnInteger
 from django.urls import reverse
-
+import re
 
 # Create your views here.
 
@@ -53,7 +53,8 @@ def SendTicket(request):
         if request.method == 'POST':
 
             form=TicketForm(request.POST)
-
+            form.name=request.user.username 
+            form.email=request.user.email
             if form.is_valid():
                 form.save(commit=False)
                 user=User.objects.get(id=request.user.id)
@@ -63,9 +64,11 @@ def SendTicket(request):
                 return HttpResponse('ممنون از گزارش شما')
             else:
                 return HttpResponse('فرم پر شده معتبر نمی باشد')
+        else:
+            return redirect('blog:home')
     else :
+
         return HttpResponse('pleas authentication')         
-    return redirect('blog:home')
 
 
 
@@ -77,11 +80,17 @@ def SendTicket(request):
 def SubscribeView(request):
     if request.method=='POST':
 
+        email_regex=r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
         email=request.POST.get('email')
-        SubscribtionEmail(email=email).save()
-        return HttpResponse('tankyou for subscribe')
+
+        if re.fullmatch(email_regex,email):
+            SubscribtionEmail(email=email).save()
+            return HttpResponse('Thankyou for subscribe')
+        else:
+            return HttpResponse('Your email format is not right')
+
     else:
-        return HttpResponse('request not POST')
+        return redirect('blog:home')
 
 
 
