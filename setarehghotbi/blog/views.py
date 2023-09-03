@@ -7,7 +7,7 @@ from .models import(
                     Comment,
                     )
 from .forms import TicketForm , CommentForm
-from django.http import HttpResponse , HttpResponseRedirect
+from django.http import HttpResponse , HttpResponseRedirect , Http404
 from account.models import User
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -100,9 +100,12 @@ def SubscribeView(request):
 
 # This view  for showing article content page
 def SinglePostView(request,slug):
+    try:
+        all_comments=Comment.objects.select_related('commenter','parent').filter(status=True,post__slug=slug)
+        article=BlogModel.objects.select_related('auther').get(slug=slug)
+    except (Comment.DoesNotExist,BlogModel.DoesNotExist) :
+        return Http404('Page not found')
 
-    all_comments=Comment.objects.select_related('commenter','parent').filter(status=True,post__slug=slug)
-    article=BlogModel.objects.select_related('auther').get(slug=slug)
     if request.user.is_authenticated:
         user_likes=request.user.likes.all() 
     else :
@@ -130,7 +133,7 @@ def CreateComment(request):
             if comment_form.is_valid():
                 content=comment_form.cleaned_data['content']
                 article_slug=request.POST.get('article_slug')
-                article=get_object_or_404(BlogModel,slug=article_slug)
+                article=get_object_or_404(BlogModel,slug=request.POST.get('article_slug'))
 
                 if request.POST.get('comment_id'):
                     comment_parent=get_object_or_404(Comment,id=request.POST.get('comment_id'))
@@ -154,9 +157,9 @@ def CreateComment(request):
                 comment.save()
                 return redirect(reverse('blog:single_post',kwargs={'slug':article_slug}))
             else: 
-                return HttpResponse('form is not valid')
+                return HttpResponse('Form is not valid')
         else:
-            return HttpResponse('pleas authentication')
+            return HttpResponse('Pleas authentication')
     else:
         return redirect(reverse('blog:home'))
 
@@ -170,7 +173,10 @@ def LikeComment(request):
     if request.user.is_authenticated:
         if request.method=='POST':
             comment_id=request.POST.get('comment_id')
-            comment=Comment.objects.prefetch_related('likes').get(id=comment_id)
+            try:
+                comment=Comment.objects.prefetch_related('likes').get(id=comment_id)
+            except Comment.DoesNotExist:
+                return Http404(' Comment matching query does not exist')
             if comment.likes.filter(id=request.user.id).exists():
                 comment.likes.remove(request.user)
                 comment.like_count-=1
@@ -184,7 +190,7 @@ def LikeComment(request):
             article_slug=request.POST.get('slug')
             return HttpResponseRedirect(reverse('blog:single_post',kwargs={'slug':article_slug}))
         else:
-            return HttpResponse('pleas send post request')
+            return HttpResponse('Pleas send post request')
     else:
         return HttpResponse('pleas authentication')
 
@@ -195,7 +201,12 @@ def LikeComment(request):
 # This view is for displaying all the articles of an author
 def AutherArticlesView(request,slug):
 
-    auther=get_object_or_404(User,username=slug)
+
+    try: 
+        auther=User.objects.select_related('auther_articles').get(username=slug)
+    except User.DoesNotExist:   
+        return Http404("Poll does not exist")
+
     articles=auther.auther_articles.filter(status='public')
     articles_count=articles.count()
 
