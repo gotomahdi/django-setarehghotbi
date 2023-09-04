@@ -12,7 +12,7 @@
 
   <!-- ======= Hero Section ======= -->
 {% block hero %}
-  {% if article.is_image_header %}
+  {% if article.is_image_header and article.image %}
     <style type="text/css">
       #hero-single-post {
       width: 100%;
@@ -62,7 +62,7 @@
         <img src="{{article.auther.profile.url}}" style="display: inline-block;border-radius:50% ;width: 6%; margin-bottom:10px;">
         <p style="color:#6c757d; display: inline-block; margin-left:30px ;">نویسنده:{{article.auther.username}}</p>
         <p style="color:#6c757d; display:inline;">زمان انتشار:{{article.date}}</p>
-        {% if article.is_image_header == False %}
+        {% if article.is_image_header == False and article.image %}
           <img src="{{article.image.url}}" style="width:100%; border-radius:5px; display:inline-block;">
         {% endif %}
         <hr>
@@ -147,7 +147,7 @@
                         <button class="btn btn-success" style="float:left; font-size: 20px;">ثبت این نظر</button>
                       </form>
                       {% if request.user.is_authenticated %}
-                        <div class="d-flex flex-row user-info" style="margin-top :10px;"><img class="rounded-circle" src="{{request.user.profile.url}}" width="50">
+                        <div class="d-flex flex-row user-info" style="margin-top :10px;"><img class="rounded-circle" src="{{article.auther.profile.url}}" width="50">
                        <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">Marry Andrews</span><span class="date text-black-50">Shared publicly - Jan 2020</span></div>
                         </div>
                       {% else %}

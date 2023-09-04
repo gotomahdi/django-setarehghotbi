@@ -104,7 +104,7 @@ def SinglePostView(request,slug):
         all_comments=Comment.objects.select_related('commenter','parent').filter(status=True,post__slug=slug)
         article=BlogModel.objects.select_related('auther').get(slug=slug)
     except (Comment.DoesNotExist,BlogModel.DoesNotExist) :
-        return Http404('Page not found')
+        return Http404('Page Not foud')
 
     if request.user.is_authenticated:
         user_likes=request.user.likes.all() 
@@ -202,10 +202,7 @@ def LikeComment(request):
 def AutherArticlesView(request,slug):
 
 
-    try: 
-        auther=User.objects.select_related('auther_articles').get(username=slug)
-    except User.DoesNotExist:   
-        return Http404("Poll does not exist")
+    auther = get_object_or_404(User,username=slug)
 
     articles=auther.auther_articles.filter(status='public')
     articles_count=articles.count()

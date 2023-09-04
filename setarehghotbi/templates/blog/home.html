@@ -72,7 +72,7 @@
               {% endif %}
               {% for blog_model in blog  %}
                     <div class="col-md-6 d-flex align-items-stretch mt-4">
-                      <div class="card" style='background-image: url("{{blog_model.image.url}}");'>
+                      {% if blog_model.image %}<div class="card" style='background-image: url("{{blog_model.image.url}}");'>{% endif %}
                         <div class="card-body">
                           <div>
                           <a href="{% url 'blog:single_post' blog_model.slug %}">   

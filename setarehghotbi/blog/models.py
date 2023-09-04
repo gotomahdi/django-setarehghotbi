@@ -10,7 +10,7 @@ from django.db.models import Q
 class CategoryModels(models.Model):
 	title=models.CharField(max_length=30,verbose_name='category name/title')
 	description=models.TextField(max_length=200,verbose_name='category description',blank=True)
-	image=models.ImageField(upload_to='media',verbose_name='category image')
+	image=models.ImageField(upload_to='media/blog/categorys',verbose_name='category image',default=None)
 	slug=models.SlugField(max_length=150,verbose_name='slug category')
 	parent=models.ForeignKey('CategoryModels',verbose_name='category parend',on_delete=models.CASCADE,related_name='children',default=None,blank=True,null=True)
 	have_children=models.BooleanField(verbose_name='category is parent of another category',default=False)
@@ -29,7 +29,7 @@ class BlogModel(models.Model):
 	title=models.CharField(verbose_name='blog title',max_length=100)
 	description=models.TextField(verbose_name='blog description')
 	date=models.DateTimeField(verbose_name='blog date',default=timezone.now)
-	image=models.ImageField(verbose_name='blog image',upload_to='media')
+	image=models.ImageField(verbose_name='blog image',upload_to='media/blog/articles',null=True,default=None)
 	is_image_header=models.BooleanField(verbose_name='is header image?',default=True)
 	slug=models.SlugField(verbose_name='blog slug',max_length=50)
 	status=models.CharField(verbose_name='blog status',choices=BLOG_CHOICES,max_length=50,default='draft')
