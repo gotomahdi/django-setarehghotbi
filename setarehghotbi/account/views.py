@@ -2,7 +2,7 @@ from django.shortcuts import render , redirect
 from django.contrib.sites.shortcuts import get_current_site
 from .forms import SignUpForm ,LoginForm ,PasswordRestFrom
 from django.contrib.auth import authenticate ,login ,logout
-from django.http import HttpResponse
+from django.http import HttpResponse ,HttpResponseRedirect
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.encoding import force_str ,force_bytes
@@ -28,7 +28,7 @@ def Activate(request, uidb64, token):
         user.is_active = True
         # set signup_confirmation true
         user.save()
-        return redirect('account:login')
+        return HttpResponseRedirect('account:login')
     else:
         return render(request, 'account/registration/activation_invalid.html')
 
@@ -104,7 +104,7 @@ def LogoutView(request):
 
 
 
-def RestPasswordView(request):
+def ResetPasswordView(request):
 
     if request.method=='POST':
         email=request.POST.get('email')
@@ -139,33 +139,34 @@ def RestPasswordView(request):
 
 
 
-def RestPasswordActivate(request, uidb64, token):   
-    try:
-        uid = force_str(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    # checking if the user exists, if the token is valid.
-    if user is not None and account_activation_token.check_token(user, token):
-        if request.method=='POST':
+def ResetPasswordActivate(request, uidb64, token):   
+    if request.method=='POST':
 
-            form=PasswordRestFrom(request.POST or None)
-            if form.is_valid():
+        form=PasswordRestFrom(request.POST or None)
+        if form.is_valid():
+                try:
+                    uid = force_str(urlsafe_base64_decode(uidb64))
+                    user = User.objects.get(pk=uid)
+                except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+                    user = None
+                # checking if the user exists, if the token is valid.
+                if user is not None and account_activation_token.check_token(user, token):
 
-                form_data=form.cleaned_data
-                # check passwords for rest password user
-                if form_data['password1'] == form_data['password2']:
-                    #Password reset and password change link expiration
-                    user.set_password(form_data['password1'])
-                    user.save()
-                    return redirect('account:login')
+                    form_data=form.cleaned_data
+                    # check passwords for rest password user
+                    if form_data['password1'] == form_data['password2']:
+                        #Password reset and password change link expiration
+                        user.set_password(form_data['password1'])
+                        user.save()
+                        return redirect('account:login')
+                    else:
+                        # show error if not set passwords
+                        messages.error(request,'گذرواژه ها یکسان نیستند')
+                        return render(request,'account/registration/rest_password_confirm.html',{'form':form})
                 else:
-                    # show error if not set passwords
-                    messages.error(request,'گذرواژه ها یکسان نیستند')
-                    return render(request,'account/registration/rest_password_confirm.html',{'form':form})
-            else:
-                return render(request,'account/registration/rest_password_confirm.html',{'form':form})
+                    return render(request, 'account/registration/activation_invalid.html')
         else:
+            return render(request,'account/registration/rest_password_confirm.html',{'form':form})
             form=PasswordRestFrom()
 
         return render(request,'account/registration/rest_password_confirm.html',{'form':form})
