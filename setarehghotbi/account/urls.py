@@ -4,8 +4,8 @@ from .views import(
 				Activate ,
 				LoginView ,
 				LogoutView ,
-				RestPasswordView ,
-				RestPasswordActivate
+				ResetPasswordView ,
+				ResetPasswordActivate
 			)
 
 app_name='account'
@@ -14,8 +14,8 @@ urlpatterns=[
 	path('signup/',SignUpView,name='sign_up'),
 	path('activate/<slug:uidb64>/<slug:token>/', Activate, name='activate'),
 
-	path('PasswrodActivate/<slug:uidb64>/<slug:token>/', RestPasswordActivate, name='rest_password_activate'),
-	path('ResstPassword/',RestPasswordView,name='rest_password'),
+	path('PasswrodActivate/<slug:uidb64>/<slug:token>/', ResetPasswordActivate, name='reset_password_activate'),
+	path('ResstPassword/',ResetPasswordView,name='reset_password'),
 
 	path('login/', LoginView, name='login'),
 	path('logout/', LogoutView, name='logout'),
